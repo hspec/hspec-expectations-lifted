@@ -19,7 +19,7 @@ library
   ghc-options:
       -Wall
   build-depends:
-      base < 4.8
+      base == 4.*
     , hspec-expectations >= 0.5
     , transformers
   hs-source-dirs:
@@ -38,6 +38,6 @@ test-suite spec
       src
     , test
   build-depends:
-      base
+      base == 4.*
     , hspec       >= 1.3
     , hspec-expectations-lifted
