@@ -72,8 +72,8 @@ shouldMatchList = liftIO2 E.shouldMatchList
 -- |
 -- @action \`shouldReturn\` expected@ sets the expectation that @action@
 -- returns @expected@.
-shouldReturn :: (HasCallStack, MonadIO m, Show a, Eq a) => IO a -> a -> m ()
-shouldReturn = liftIO2 E.shouldReturn
+shouldReturn :: (HasCallStack, MonadIO m, Show a, Eq a) => m a -> a -> m ()
+shouldReturn action expected = action >>= liftIO . (`E.shouldBe` expected)
 
 -- |
 -- @actual \`shouldNotBe\` notExpected@ sets the expectation that @actual@ is not
