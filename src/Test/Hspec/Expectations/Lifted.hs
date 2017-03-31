@@ -95,5 +95,5 @@ shouldNotContain = liftIO2 E.shouldNotContain
 -- |
 -- @action \`shouldNotReturn\` notExpected@ sets the expectation that @action@
 -- does not return @notExpected@.
-shouldNotReturn :: (HasCallStack, MonadIO m, Show a, Eq a) => IO a -> a -> m ()
-shouldNotReturn = liftIO2 E.shouldNotReturn
+shouldNotReturn :: (HasCallStack, MonadIO m, Show a, Eq a) => m a -> a -> m ()
+shouldNotReturn action expected = action >>= liftIO . (`E.shouldNotBe` expected)
