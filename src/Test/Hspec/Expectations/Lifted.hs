@@ -14,6 +14,8 @@ module Test.Hspec.Expectations.Lifted (
 , shouldMatchList
 , shouldReturn
 
+, shouldThrowException
+
 , shouldNotBe
 , shouldNotSatisfy
 , shouldNotContain
@@ -23,7 +25,11 @@ module Test.Hspec.Expectations.Lifted (
 , HasCallStack
 ) where
 
+import           Control.Monad (unless)
 import           Control.Monad.IO.Class
+import           Control.Monad.Catch (MonadCatch, try)
+import           Control.Exception (Exception)
+import           Data.Typeable (typeOf)
 import qualified Test.Hspec.Expectations as E
 import           Test.Hspec.Expectations (HasCallStack)
 
@@ -97,3 +103,20 @@ shouldNotContain = liftIO2 E.shouldNotContain
 -- does not return @notExpected@.
 shouldNotReturn :: (HasCallStack, MonadIO m, Show a, Eq a) => m a -> a -> m ()
 shouldNotReturn action expected = action >>= liftIO . (`E.shouldNotBe` expected)
+
+-- |
+-- @action \`shouldThrowException\` expected@ Exception
+shouldThrowException :: (HasCallStack, MonadIO m, MonadCatch m, Exception e, Eq e) =>  m a -> e -> m ()
+action `shouldThrowException` e = do
+    r <- try action 
+    case r of
+        Right _ -> 
+            expectationFailure $ 
+                "did not get expected exception: " <> exceptionType e
+        Left err -> unless (err == e) $ 
+            expectationFailure $
+                "predicate failed on expected exception: "
+                <> exceptionType e 
+                <> " (" <> show err <> ")"
+    where 
+        exceptionType = (show . typeOf) 

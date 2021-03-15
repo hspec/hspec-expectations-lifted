@@ -20,8 +20,10 @@ library
       -Wall
   build-depends:
       base == 4.*
+    , exceptions
     , hspec-expectations >= 0.8.2
     , transformers
+    , mtl
   hs-source-dirs:
       src
   exposed-modules:
